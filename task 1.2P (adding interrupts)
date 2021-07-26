@@ -1,0 +1,55 @@
+const uint8_t sensor_pin = 2;
+const uint8_t led_pin = 10;
+
+volatile uint8_t led_state = LOW;
+
+int distance = 0;
+
+long readUltrasonicDistance(int triggerPin, int echoPin)
+{
+ pinMode(triggerPin, OUTPUT); 
+ digitalWrite(triggerPin, LOW);
+ delayMicroseconds(2);
+ digitalWrite(triggerPin, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(triggerPin, LOW);
+ pinMode(echoPin, INPUT);
+ return pulseIn(echoPin, HIGH);
+ }
+
+
+void setup()
+{
+ Serial.begin(9600);
+
+ pinMode(10, OUTPUT);
+  
+ attachInterrupt(digitalPinToInterrupt(sensor_pin), toggle, CHANGE);
+}
+  
+void loop () 
+{  
+  distance = 0.01723 * readUltrasonicDistance(2, 2);
+  delay(500);
+}
+
+
+void toggle() {
+  
+ distance = 0.01723 * readUltrasonicDistance(2, 2);
+ Serial.println(distance);
+ if (distance < 80) 
+ {
+   	Serial.println("led is blinking!");
+ 	digitalWrite(10, HIGH);
+ } 
+ else 
+ {
+   	Serial.println("led is not blinking!");
+ 	digitalWrite(10, LOW);
+ }
+ delay(500);
+}
+
+  
+
